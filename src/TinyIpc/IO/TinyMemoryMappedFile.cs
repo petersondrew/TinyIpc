@@ -3,6 +3,7 @@ using System.IO.MemoryMappedFiles;
 using System.Threading;
 using System.Threading.Tasks;
 using TinyIpc.Synchronization;
+using static TinyIpc.Resource;
 
 namespace TinyIpc.IO
 {
@@ -22,7 +23,7 @@ namespace TinyIpc.IO
 
 		public event EventHandler FileUpdated;
 
-		public long MaxFileSize { get; private set; }
+		public long MaxFileSize { get; }
 
 		public const int DefaultMaxFileSize = 1024 * 1024;
 
@@ -100,7 +101,7 @@ namespace TinyIpc.IO
 
 				if (disposeLock && readWriteLock is TinyReadWriteLock)
 				{
-					(readWriteLock as TinyReadWriteLock).Dispose();
+					(readWriteLock as TinyReadWriteLock)?.Dispose();
 				}
 
 				fileWaitHandle.Dispose();
@@ -247,7 +248,7 @@ namespace TinyIpc.IO
 			if (maxFileSize <= 0)
 				throw new ArgumentException("Max file size can not be less than 1 byte", nameof(maxFileSize));
 
-			return MemoryMappedFile.CreateOrOpen("TinyMemoryMappedFile_MemoryMappedFile_" + name, maxFileSize + sizeof(int));
+			return MemoryMappedFile.CreateOrOpen(SafeName("TinyMemoryMappedFile_MemoryMappedFile_", name), maxFileSize + sizeof(int));
 		}
 
 		/// <summary>
@@ -260,7 +261,7 @@ namespace TinyIpc.IO
 			if (string.IsNullOrWhiteSpace(name))
 				throw new ArgumentException("EventWaitHandle must be named", nameof(name));
 
-			return new EventWaitHandle(false, EventResetMode.ManualReset, "TinyMemoryMappedFile_WaitHandle_" + name);
+			return new EventWaitHandle(false, EventResetMode.ManualReset, SafeName("TinyMemoryMappedFile_WaitHandle_", name));
 		}
 	}
 }

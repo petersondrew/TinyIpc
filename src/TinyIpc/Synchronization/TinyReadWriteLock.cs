@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using static TinyIpc.Resource;
 
 namespace TinyIpc.Synchronization
 {
@@ -181,7 +182,7 @@ namespace TinyIpc.Synchronization
 		/// <returns>A system wide Mutex</returns>
 		public static Mutex CreateMutex(string name)
 		{
-			return new Mutex(false, "TinyReadWriteLock_Mutex_" + name);
+			return new Mutex(false, SafeName("TinyReadWriteLock_Mutex_", name));
 		}
 
 		/// <summary>
@@ -192,7 +193,7 @@ namespace TinyIpc.Synchronization
 		/// <returns>A system wide Semaphore</returns>
 		public static Semaphore CreateSemaphore(string name, int maxReaderCount)
 		{
-			return new Semaphore(maxReaderCount, maxReaderCount, "TinyReadWriteLock_Semaphore_" + name);
+			return new Semaphore(maxReaderCount, maxReaderCount, SafeName("TinyReadWriteLock_Semaphore_", name));
 		}
 	}
 }
